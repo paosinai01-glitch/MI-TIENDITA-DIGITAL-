@@ -1,11 +1,64 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#176b57"><title>Papelería Digital · Papelería V4</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#800c2e"><title>Papelería Digital ETI 96 · Retos Matemáticos</title>
 <style>
 :root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#1b302b;background:#f3f7f5}*{box-sizing:border-box}body{margin:0}header{background:#176b57;color:#fff;padding:22px 15px;text-align:center}header h1{margin:0;font-size:clamp(1.6rem,5vw,2.3rem)}header p{margin:7px 0 0}main{max-width:980px;margin:auto;padding:14px}.card{background:white;border:1px solid #d8e4df;border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 2px 8px #123b2b0b}h2{margin:0 0 13px;font-size:1.22rem}h3{margin:9px 0}button,input,select{font:inherit}button{background:#176b57;color:white;border:0;border-radius:11px;padding:11px 14px;font-weight:650;cursor:pointer;min-height:44px}button.secondary{background:#e4f1ea;color:#135a45}button.danger{background:#a13939}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e4a72b;outline-offset:2px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}.product{border:1px solid #dce7e1;border-radius:14px;padding:12px;text-align:center;background:#fbfdfc}.emoji{font-size:2.6rem}.product-photo{display:block;width:100%;height:135px;object-fit:cover;border-radius:10px;margin-bottom:10px;background:#f1f3f6}.product{overflow:hidden}.challenge-cart{border:2px solid #a8cdb9;border-radius:14px;background:#f7fcf9;padding:14px;margin:12px 0}.challenge-cart h3{margin:0 0 6px}.challenge-cart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.challenge-cart-item{display:flex;align-items:center;gap:9px;padding:9px;background:white;border:1px solid #dce7e1;border-radius:10px}.challenge-cart-item img{width:56px;height:56px;object-fit:cover;border-radius:7px;flex-shrink:0}.challenge-cart-item div{font-size:.88rem;line-height:1.35}.challenge-cart-item strong{display:block}.product strong{display:block;min-height:2.4em}.price{font-weight:750;margin:6px 0}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}.muted{color:#4b645b}.pill{display:inline-block;border-radius:99px;padding:6px 10px;background:#e6f3ec;color:#165b46;font-weight:700}.budget{background:#e7f4ed;border-color:#93c5a7}.budget strong{font-size:1.5rem}.quantity{width:72px;padding:10px;border:1px solid #9bb5a7;border-radius:10px}select,.answer{padding:11px;border:1px solid #8ba99c;border-radius:10px;max-width:100%;background:#fff}.answer{width:180px}.cartline{padding:9px 0;border-bottom:1px solid #e3ece7}.hint{background:#fff8e9;border:1px solid #f0d79b;border-radius:12px;padding:14px;margin-top:12px}.task{background:#f0f7f3;border-radius:12px;padding:16px;margin:12px 0;font-size:1.05rem}.status{min-height:1.6em;font-weight:650;margin-top:10px}.success{color:#176b57}.warning{color:#a13939}.sign{font-size:1.45rem;min-width:64px}.sign[aria-pressed=true]{background:#f0ad36;color:#1b302b;outline:2px solid #a76a00}.hide{display:none!important}.progress{height:12px;background:#dcebe3;border-radius:30px;overflow:hidden}.progress span{display:block;height:100%;background:#1c8765;transition:width .2s}.small{font-size:.9rem}footer{text-align:center;padding:20px;color:#4b645b}@media(max-width:480px){.card{padding:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product button{width:100%}}
+
+/* Identidad visual ETI 96: solo presentación, sin alterar Firebase ni retos */
+:root{color:#42192a;background:#fff7ed}
+body{background:radial-gradient(circle at 12% 12%,#ffe7d9 0,transparent 28%),linear-gradient(135deg,#fff8ef,#fce9e4 60%,#fff8ef);color:#42192a}
+header.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+main{max-width:1200px;padding:0 18px 26px}
+.eti-hero{position:relative;isolation:isolate;max-width:1160px;margin:0 auto 22px;aspect-ratio:1648/1020;background:#f7e4d9;border-radius:0 0 24px 24px;overflow:hidden;box-shadow:0 12px 36px #540a2d28}
+.eti-hero-image{position:absolute;inset:0;background:url("portada_eti96.webp") top center/100% auto no-repeat;z-index:-1}
+#loginCard{position:absolute;left:26%;width:48%;top:46%;margin:0;min-height:43%;padding:15px 22px 12px;background:#fffaf3f7;border:3px solid #8c1237;border-radius:28px;box-shadow:0 8px 18px #650b2b25;text-align:center;overflow:auto;max-height:51%}
+#loginCard h2{font-size:clamp(1.15rem,2.1vw,1.75rem);color:#6e0730;margin:0 0 5px}
+#loginCard .login-help{font-size:.85rem;margin:0 0 8px;color:#65384a}
+#loginCard .row{justify-content:center}
+#loginCard label{color:#63132e;font-weight:700}
+#loginCard .row:has(input[name="tipoAcceso"]){margin:6px auto 10px;gap:18px}
+#loginCard #studentLoginFields,#loginCard #teacherLoginFields{display:grid;grid-template-columns:1fr;gap:4px;text-align:left;max-width:360px;margin:auto}
+#loginCard input:not([type=radio]),#loginCard select{width:100%;border:2px solid #9b3452;border-radius:14px;padding:9px 12px;background:#fff;font-size:1rem;min-height:40px}
+#loginCard p:has(#loginPassword){max-width:360px;margin:8px auto;text-align:left}
+#loginCard #loginButton{min-width:175px}
+#loginCard #loginStatus{font-size:.84rem;margin:7px auto 0;max-width:430px}
+.card{border:1px solid #ead0c9;border-radius:20px;box-shadow:0 5px 18px #6b143016;background:#fffdfa}
+#teacherPanel{border-top:6px solid #850d35}
+#studentApp .card{border-top:5px solid #9e1d44}
+h2,h3{color:#791235}
+button{background:linear-gradient(180deg,#ae1648,#78082f);color:white;border-radius:13px;box-shadow:0 3px 0 #54062122}
+button.secondary{background:#f8e5e9;color:#7e1238}
+button.danger{background:#ad3140}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #edb342}
+select,.answer,.quantity{border-color:#bd8c9b}
+.product{background:#fff8f3;border-color:#eed6d3;transition:transform .15s,box-shadow .15s}
+.product:hover{transform:translateY(-2px);box-shadow:0 6px 18px #6b143022}
+.price{color:#851036}
+.budget{background:#fff0da;border-color:#e6b96e}
+.budget strong{color:#7e0b34}
+.pill{background:#f9e3eb;color:#84143c}
+.challenge-cart{background:#fff7f0;border-color:#e5bac7}
+.challenge-cart-item{border-color:#ecd5d7}
+.task{background:#fff1e6;border-left:5px solid #ae2350}
+.hint{background:#fff8dd}
+.progress{background:#f5dce5}
+.progress span{background:#a71748}
+.success{color:#176b57}.warning{color:#a13939}
+.sign[aria-pressed=true]{background:#f5bd45;color:#4b2031}
+footer{color:#7b3650}
+@media(max-width:760px){
+ main{padding:0 10px 20px}
+ .eti-hero{aspect-ratio:auto;min-height:0;overflow:visible;background:#fff8f1;border-radius:0 0 20px 20px}
+ .eti-hero-image{position:relative;z-index:auto;display:block;aspect-ratio:1648/928;background-size:100% auto;border-radius:0}
+ #loginCard{position:relative;top:auto;left:auto;width:calc(100% - 22px);max-height:none;min-height:0;margin:-5px 11px 14px;padding:18px 14px;overflow:visible;background:#fffaf5}
+ #loginCard h2{font-size:1.5rem}
+ #loginCard .login-help{font-size:.92rem}
+}
+
 </style></head><body>
-<header><h1>✏️ Papelería Digital</h1><p>Tu papelería escolar · Elige, calcula y aprende</p></header>
+<header class="sr-only"><h1>Papelería Digital ETI 96</h1><p>Retos Matemáticos</p></header>
 <main>
-<section class="card" id="loginCard"><h2>Acceso a Papelería Digital</h2><p>Estudiantes: elige tu grupo, número de lista y escribe tu contraseña. Docente: utiliza tu correo.</p><div class="row"><label><input type="radio" name="tipoAcceso" value="alumno" checked> Alumno</label><label><input type="radio" name="tipoAcceso" value="docente"> Docente</label></div><div id="studentLoginFields"><label for="loginGroup">Grupo</label> <select id="loginGroup"><option value="2J">2.º J</option><option value="2L">2.º L</option></select> <label for="loginNumber">Número de lista (01 a 55)</label> <input id="loginNumber" type="number" min="1" max="55" step="1" inputmode="numeric" placeholder="Ej. 05"></div><div id="teacherLoginFields" class="hide"><label for="loginEmail">Correo docente</label> <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></div><p><label for="loginPassword">Contraseña</label> <input id="loginPassword" type="password" autocomplete="current-password"></p><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p></section>
+<div class="eti-hero" id="etiHero"><div class="eti-hero-image" role="img" aria-label="Papelería Digital ETI 96, ajolote con lápiz y calculadora y fondo ilustrado de papelería"></div>
+<section class="card" id="loginCard"><h2>¡Inicia sesión!</h2><p class="login-help">Elige cómo ingresar a tu papelería.</p><div class="row"><label><input type="radio" name="tipoAcceso" value="alumno" checked> Alumno</label><label><input type="radio" name="tipoAcceso" value="docente"> Docente</label></div><div id="studentLoginFields"><label for="loginGroup">Grupo</label> <select id="loginGroup"><option value="2J">2.º J</option><option value="2L">2.º L</option></select> <label for="loginNumber">Número de lista (01 a 55)</label> <input id="loginNumber" type="number" min="1" max="55" step="1" inputmode="numeric" placeholder="Ej. 05"></div><div id="teacherLoginFields" class="hide"><label for="loginEmail">Correo docente</label> <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></div><p><label for="loginPassword">Contraseña</label> <input id="loginPassword" type="password" autocomplete="current-password"></p><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p></section></div>
 <section class="card hide" id="teacherPanel"><h2>Panel docente · Historial</h2><p>Consulta las sesiones de estudiantes registrados. Solo disponible para cuentas con rol docente.</p><button id="refreshSessions" type="button">Actualizar historial</button><div id="sessionsList" aria-live="polite"></div></section>
 <div id="studentApp" class="hide">
 <section class="card" id="setup"><h2>1. Elige tu ruta matemática</h2><label for="route">Ruta de aprendizaje</label> <select id="route"><option value="a">Ruta A · Suma y resta</option><option value="b">Ruta B · Multiplicación y división</option></select><p class="muted small">Puedes trabajar con papel y lápiz. La tiendita no resolverá las operaciones por ti.</p></section>
@@ -70,10 +123,26 @@ async function next(){if(!locked)return;try{await window.v4SaveSession(index===4
 function again(){if(balance<=0){$('finish').querySelector('p').textContent='Ya utilizaste todo tu presupuesto. Puedes comenzar de nuevo.';return}$('finish').classList.add('hide');$('setup').classList.remove('hide');$('store').classList.remove('hide');$('thinking').classList.remove('hide');$('cartSection').classList.remove('hide');$('store').scrollIntoView({behavior:'smooth',block:'start'})}
 $('route').addEventListener('change',()=>{renderCart()});$('start').onclick=start;$('clear').onclick=()=>{cart={};renderCart()};$('check').onclick=check;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')check()});$('hintButton').onclick=()=>{$('hint').classList.toggle('hide');hints++;if(window.v4RecordHint)window.v4RecordHint(index);};$('next').onclick=next;$('again').onclick=again;$('reset').onclick=()=>{if(window.v4HasOpenSession && window.v4HasOpenSession()){alert('Termina los cinco retos antes de reiniciar para conservar el registro.');return;}balance=200;purchases=0;cart={};updateBalance();renderCart();$('finish').classList.add('hide');$('setup').classList.remove('hide');$('store').classList.remove('hide');$('thinking').classList.remove('hide');$('cartSection').classList.remove('hide');$('store').scrollIntoView({behavior:'smooth'})};renderProducts();renderCart();updateBalance();
 </script>
+<script>
+// Acceso docente/alumno disponible aunque Firebase tarde en cargar.
+(function(){
+  const radios=document.querySelectorAll('input[name="tipoAcceso"]');
+  const student=document.getElementById('studentLoginFields');
+  const teacher=document.getElementById('teacherLoginFields');
+  function updateAccess(){
+    const selected=document.querySelector('input[name="tipoAcceso"]:checked');
+    const teacherMode=selected && selected.value==='docente';
+    student.classList.toggle('hide',teacherMode);
+    teacher.classList.toggle('hide',!teacherMode);
+  }
+  radios.forEach(radio=>radio.addEventListener('change',updateAccess));
+  updateAccess();
+})();
+</script>
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js';
-import {getFirestore,doc,getDocFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
+import {getFirestore,collection,collectionGroup,doc,addDoc,updateDoc,getDocsFromServer,getDocFromServer,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
 const firebaseConfig={apiKey:'AIzaSyA36PzVwed30aDC0KZQDefHJmT63GiOle4',authDomain:'mi-tiendita-digital-v4.firebaseapp.com',projectId:'mi-tiendita-digital-v4',storageBucket:'mi-tiendita-digital-v4.firebasestorage.app',messagingSenderId:'395051599416',appId:'1:395051599416:web:5a696e57464f4223e588cd'};
 const DOCENTE_UID='yhU8ZSQdGlPJweCv3ByoSnnfxL33';
 const DOMAIN='alumnos.example.com';
@@ -84,7 +153,7 @@ const status=s=>byId('loginStatus').textContent=s;
 const isTeacher=()=>document.querySelector('input[name="tipoAcceso"]:checked').value==='docente';
 function accountEmail(group,number){return `${group.toLowerCase()}-${number}@${DOMAIN}`;}
 function studentFromEmail(email){const match=/^(2j|2l)-(0[1-9]|[1-4][0-9]|5[0-5])@alumnos\.example\.com$/i.exec(email||'');return match?{rol:'alumno',activo:true,grupo:match[1].toUpperCase(),numeroLista:match[2]}:null;}
-document.querySelectorAll('input[name="tipoAcceso"]').forEach(x=>x.addEventListener('change',()=>{byId('studentLoginFields').classList.toggle('hide',isTeacher());byId('teacherLoginFields').classList.toggle('hide',!isTeacher());}));
+// El selector de acceso se gestiona en un script independiente de Firebase.
 let authCheck=0;
 async function displayUser(next){
  const check=++authCheck;
@@ -95,26 +164,26 @@ async function displayUser(next){
  if(next.uid===DOCENTE_UID){profile={rol:'docente',activo:true};status('Acceso docente autorizado.');byId('teacherPanel').classList.remove('hide');void loadHistory();return;}
  const identity=studentFromEmail(next.email);
  if(!identity){status('Esta cuenta no corresponde a los grupos autorizados.');return;}
- status('Verificando tu registro escolar…');
- try{
-  const snap=await getDocFromServer(doc(db,'Alumnos',next.uid));
-  if(check!==authCheck)return;
-  if(!snap.exists())throw Error('No se encontró tu registro escolar. Solicita a la docente que revise el alta de tu cuenta.');
-  const data=snap.data();
-  if(data.activo!==true||data.rol!=='alumno'||data.grupo!==identity.grupo||data.numeroLista!==identity.numeroLista)
-   throw Error('Tu registro escolar no coincide con tu cuenta. Comunícalo a la docente.');
-  profile={rol:'alumno',activo:true,grupo:data.grupo,numeroLista:data.numeroLista};
-  status(`Acceso autorizado: grupo ${profile.grupo}, lista ${profile.numeroLista}.`);
-  byId('studentApp').classList.remove('hide');
- }catch(e){if(check===authCheck)status('No se pudo validar tu registro: '+(e.code||e.message));}
+ // El correo de Firebase Authentication identifica el grupo y el número de lista.
+ // No se consulta el perfil aquí: Firestore valida el documento activo y el rol
+ // al crear/actualizar sesiones mediante las reglas publicadas.
+ profile={rol:'alumno',activo:true,grupo:identity.grupo,numeroLista:identity.numeroLista};
+ status(`Acceso autenticado: grupo ${profile.grupo}, lista ${profile.numeroLista}. Los permisos de registro se comprobarán al iniciar los retos.`);
+ byId('studentApp').classList.remove('hide');
 }
 window.v4Ready=()=>!!(user&&profile?.rol==='alumno'&&!sessionOpen);
 window.v4HasOpenSession=()=>sessionOpen;
 window.v4CreateSession=async initial=>{
  if(!window.v4Ready())throw Error('Debes iniciar sesión como alumno y no tener otra sesión abierta.');
  sessionRetos=initial;
- const ref=await addDoc(collection(db,'Alumnos',user.uid,'Sesiones'),{numeroLista:profile.numeroLista,grupo:profile.grupo,fecha:serverTimestamp(),retos:[],estado:'en_progreso'});
- sessionRef=ref;sessionOpen=true;
+ try{
+  const ref=await addDoc(collection(db,'Alumnos',user.uid,'Sesiones'),{numeroLista:profile.numeroLista,grupo:profile.grupo,fecha:serverTimestamp(),retos:[],estado:'en_progreso'});
+  sessionRef=ref;sessionOpen=true;
+ }catch(e){
+  sessionRetos=[];
+  if(e.code==='permission-denied')throw Error('Firebase no autorizó guardar la sesión. Revisa que las reglas de Firestore validen el perfil activo del alumno en Alumnos y permitan crear Sesiones.');
+  throw e;
+ }
 };
 window.v4RecordAnswer=(i,answer)=>{const t=sessionRetos[i];if(t){t.respuestas.push(String(answer));t.intentos=t.respuestas.length;}};
 window.v4RecordHint=i=>{if(sessionRetos[i])sessionRetos[i].pistas++;};
@@ -140,26 +209,211 @@ byId('loginButton').onclick=async()=>{
   const password=byId('loginPassword').value;
   if(!email||!password)throw Error('Completa tus datos de acceso.');
   if(auth.currentUser)await signOut(auth);
-  const credential=await signInWithEmailAndPassword(auth,email,password);
-  byId('loginPassword').value='';await displayUser(credential.user);
+  await signInWithEmailAndPassword(auth,email,password);
+  byId('loginPassword').value='';
+  // onAuthStateChanged es el único encargado de validar y mostrar el perfil.
  }catch(e){status('No se pudo iniciar sesión: '+(e.code||e.message));}
  finally{btn.disabled=false;}
 };
 byId('logoutButton').onclick=async()=>{if(sessionOpen){status('Termina los cinco retos antes de salir.');return;}await signOut(auth);};
+// El historial siempre consulta el servidor, no una copia local posiblemente vacía.
+// El alumno piloto sirve para comprobar la lectura directa si la lista no lo incluye.
+const PILOT_UID='hlEDXSPdoafuWVpsKeeFSO3WAGH2';
+let historyRequest=0;
 async function loadHistory(){
- const out=byId('sessionsList');out.textContent='Cargando historial…';
+ const request=++historyRequest;
+ const out=byId('sessionsList');out.textContent='Consultando sesiones guardadas en Firebase…';
+ if(!auth.currentUser||auth.currentUser.uid!==DOCENTE_UID){out.textContent='Debes iniciar sesión con la cuenta docente autorizada.';return;}
+ const notes=[];const sessionsByPath=new Map();const records=new Map();let profileCount=null;
+ const note=(message)=>notes.push(message);
+ const collectSession=(snapshot)=>{
+  const path=snapshot.ref.path;
+  if(!sessionsByPath.has(path))sessionsByPath.set(path,snapshot);
+ };
  try{
-  const students=await getDocs(collection(db,'Alumnos'));out.replaceChildren();let count=0;
-  const sorted=students.docs.sort((a,b)=>a.data().grupo.localeCompare(b.data().grupo)||a.data().numeroLista.localeCompare(b.data().numeroLista));
-  for(const student of sorted){const data=student.data();
-   const sessions=await getDocs(collection(db,'Alumnos',student.id,'Sesiones'));
-   for(const snap of sessions.docs){count++;const v=snap.data();const details=document.createElement('details');const summary=document.createElement('summary');const when=v.fecha?.toDate?.()?.toLocaleString('es-MX')||'Fecha pendiente';summary.textContent=`Grupo ${data.grupo} · Lista ${data.numeroLista} · ${when} · ${v.estado||'sin estado'}`;details.append(summary);
-    const pre=document.createElement('pre');pre.style.whiteSpace='pre-wrap';pre.style.overflowWrap='anywhere';pre.textContent=(v.retos||[]).map(r=>`Reto ${r.numero}: ${r.enunciado}\nRespuestas: ${(r.respuestas||[]).join(', ')}\nIntentos: ${r.intentos||0} · Pistas: ${r.pistas||0} · Signos: ${(r.signos||[]).join(', ')}\nCorrecto: ${r.correcto?'Sí':'No'}`).join('\n\n')||'Aún no hay retos guardados.';details.append(pre);out.append(details);
-   }
+  // 1. Consulta directa de todas las subcolecciones Sesiones, sin depender
+  // de que la lista de perfiles Alumnos devuelva documentos.
+  try{
+   const all=await getDocsFromServer(collectionGroup(db,'Sesiones'));
+   all.docs.forEach(collectSession);
+   note(`Búsqueda directa de sesiones: ${all.size} documento(s).`);
+  }catch(e){note('No fue posible consultar todas las sesiones directamente: '+(e.code||e.message)+'. Es posible que las reglas requieran autorización para consultas collectionGroup.');}
+  // 2. Consulta tradicional como respaldo para reglas que permiten lecturas
+  // por alumno, pero no consultas de grupo de colecciones.
+  try{
+   const students=await getDocsFromServer(collection(db,'Alumnos'));
+   profileCount=students.size;
+   students.docs.forEach(d=>records.set(d.id,d.data()));
+  }catch(e){note('No se pudo consultar la lista de perfiles: '+(e.code||e.message));}
+  // 3. La lectura directa del piloto no depende de la lista general.
+  if(!records.has(PILOT_UID)){
+   try{
+    const pilot=await getDocFromServer(doc(db,'Alumnos',PILOT_UID));
+    if(pilot.exists())records.set(pilot.id,pilot.data());
+    else note('La lectura directa del perfil piloto respondió que no existe en esta conexión de Firestore.');
+   }catch(e){note('No se pudo leer directamente el perfil piloto: '+(e.code||e.message));}
   }
-  if(!count)out.textContent=`${students.size} alumnos registrados. Todavía no hay sesiones guardadas.`;
- }catch(e){out.textContent='Error al consultar historial: '+(e.code||e.message);}
+  let sessionReadErrors=0;
+  for(const [uid,data] of records){
+   try{
+    const result=await getDocsFromServer(collection(db,'Alumnos',uid,'Sesiones'));
+    result.docs.forEach(collectSession);
+   }catch(e){sessionReadErrors++;note(`No se pudieron leer las sesiones de ${data.grupo||'?'}-${data.numeroLista||'?'}: ${e.code||e.message}`);}
+  }
+  // La ruta piloto se comprueba incluso cuando Firestore no devuelve su perfil.
+  if(!records.has(PILOT_UID)){
+   try{
+    const result=await getDocsFromServer(collection(db,'Alumnos',PILOT_UID,'Sesiones'));
+    result.docs.forEach(collectSession);
+   }catch(e){sessionReadErrors++;note('No se pudieron leer directamente las sesiones del alumno piloto: '+(e.code||e.message));}
+  }
+  if(request!==historyRequest)return;
+  out.replaceChildren();
+  const heading=document.createElement('p');heading.style.fontWeight='700';
+  heading.textContent=sessionsByPath.size?`${sessionsByPath.size} sesión(es) encontradas en Firebase.`:'No se encontraron sesiones con las consultas realizadas. Esto no confirma que no existan registros.';
+  out.append(heading);
+  const estudiantesConSesiones=new Set([...sessionsByPath.values()].map(s=>s.ref.parent.parent?.id).filter(Boolean)).size;
+  const meta=document.createElement('p');meta.textContent=`Estudiantes con sesiones recuperadas: ${estudiantesConSesiones}. Perfiles devueltos por la consulta a Alumnos: ${profileCount===null?'consulta no disponible':profileCount}. Perfiles leídos por separado: ${records.size}.`;out.append(meta);
+  const sorted=[...sessionsByPath.values()].sort((a,b)=>{
+   const ta=a.data().fecha?.toMillis?.()||0,tb=b.data().fecha?.toMillis?.()||0;return tb-ta;
+  });
+  renderAnalytics(out,sorted);
+  for(const snap of sorted){
+   const v=snap.data();const uid=snap.ref.parent.parent?.id||'';
+   const data=records.get(uid)||{};
+   const details=document.createElement('details');
+   details.style.cssText='padding:12px;border:1px solid #d8e4df;border-radius:10px;margin:9px 0';
+   const summary=document.createElement('summary');summary.style.cursor='pointer';
+   const when=v.fecha?.toDate?.()?.toLocaleString('es-MX')||'Fecha pendiente';
+   summary.textContent=`Grupo ${v.grupo||data.grupo||'?'} · Lista ${v.numeroLista||data.numeroLista||'?'} · ${when} · ${v.estado||'sin estado'} · ${(v.retos||[]).length} retos`;
+   details.append(summary);
+   const pre=document.createElement('pre');pre.style.whiteSpace='pre-wrap';pre.style.overflowWrap='anywhere';
+   pre.textContent=(v.retos||[]).map(r=>`Reto ${r.numero}: ${r.enunciado}\nRespuestas: ${(r.respuestas||[]).join(', ')}\nIntentos: ${r.intentos||0} · Pistas: ${r.pistas||0} · Signos: ${(r.signos||[]).join(', ')}\nCorrecto: ${r.correcto?'Sí':'No'}`).join('\n\n')||'Sesión creada, sin retos guardados todavía.';
+   details.append(pre);out.append(details);
+  }
+  const diagnostics=document.createElement('details');diagnostics.style.marginTop='16px';
+  const title=document.createElement('summary');title.textContent='Detalles de las consultas a Firebase';diagnostics.append(title);
+  const list=document.createElement('ul');notes.forEach(message=>{const li=document.createElement('li');li.textContent=message;list.append(li)});diagnostics.append(list);out.append(diagnostics);
+ }catch(e){if(request===historyRequest)out.textContent='Error al cargar historial: '+(e.code||e.message);}
 }
+
+// Gráficas descriptivas: utilizan exclusivamente sesiones recuperadas del servidor.
+function renderAnalytics(out, snapshots){
+ const panel=document.createElement('section');
+ panel.style.cssText='margin:18px 0;padding:16px;border:1px solid #b9d7c7;border-radius:14px;background:#f7fcf9';
+ const heading=document.createElement('h3');heading.textContent='📊 Análisis del aprendizaje';panel.append(heading);
+ const intro=document.createElement('p');intro.className='small muted';
+ intro.textContent='Gráficas automáticas de intentos, pistas y evolución. Son indicadores descriptivos, no diagnósticos de funciones ejecutivas.';
+ panel.append(intro);
+ const grouped=new Map();
+ for(const snap of snapshots){
+  const uid=snap.ref.parent.parent?.id||'';
+  if(!uid)continue;
+  const v=snap.data();
+  if(!grouped.has(uid))grouped.set(uid,[]);
+  grouped.get(uid).push(v);
+ }
+ if(!grouped.size){const p=document.createElement('p');p.textContent='Todavía no hay sesiones recuperadas para graficar.';panel.append(p);out.append(panel);return;}
+ const selector=document.createElement('select');
+ selector.setAttribute('aria-label','Seleccionar estudiante para analizar');
+ for(const [uid,sessions] of grouped){
+  const v=sessions[0];
+  const opt=document.createElement('option');opt.value=uid;
+  opt.textContent=`Grupo ${v.grupo||'?'} · Lista ${v.numeroLista||'?'} (${sessions.length} sesión(es))`;
+  selector.append(opt);
+ }
+ panel.append(selector);
+ const charts=document.createElement('div');charts.style.marginTop='16px';panel.append(charts);
+ function el(tag,attrs={},textValue){
+  const n=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));
+  if(textValue!==undefined)n.textContent=String(textValue);
+  return n;
+ }
+ function chart(title,labels,series){
+  const wrap=document.createElement('div');wrap.style.cssText='margin:14px 0;padding:12px;background:white;border:1px solid #d8e4df;border-radius:12px';
+  const h=document.createElement('h4');h.textContent=title;wrap.append(h);
+  const width=700,height=260,left=52,right=18,top=26,bottom=58;
+  const svg=el('svg',{viewBox:`0 0 ${width} ${height}`,role:'img','aria-label':title,style:'width:100%;height:auto;max-height:320px'});
+  const values=series.flatMap(x=>x.values);
+  const max=Math.max(1,...values);
+  const ceiling=Math.max(1,Math.ceil(max));
+  const pw=width-left-right,ph=height-top-bottom;
+  const tickStep=Math.max(1,Math.ceil(ceiling/5));
+  const axisMax=Math.ceil(ceiling/tickStep)*tickStep;
+  for(let value=0;value<=axisMax;value+=tickStep){
+   const y=top+ph-(value/axisMax)*ph;
+   svg.append(el('line',{x1:left,y1:y,x2:width-right,y2:y,stroke:'#e0ebe5'}));
+   svg.append(el('text',{x:left-8,y:y+4,'text-anchor':'end','font-size':12,fill:'#466255'},value));
+  }
+  const n=Math.max(1,labels.length),groupW=pw/n,barW=Math.min(36,groupW/(series.length+1));
+  const colors=['#176b57','#e4a72b'];
+  labels.forEach((label,i)=>{
+   const x=left+(i+.5)*groupW;
+   const parts=label.split(' ');
+   if(parts.length===2 && parts[0].includes('/') && parts[1].includes(':')){
+    svg.append(el('text',{x,y:height-39,'text-anchor':'middle','font-size':11,fill:'#1b302b'},parts[0]));
+    svg.append(el('text',{x,y:height-24,'text-anchor':'middle','font-size':11,fill:'#466255'},parts[1]));
+   }else{
+    svg.append(el('text',{x,y:height-32,'text-anchor':'middle','font-size':Math.min(12,Math.max(9,650/n)),fill:'#1b302b'},label));
+   }
+   series.forEach((ser,j)=>{
+    const v=Number(ser.values[i])||0;
+    const bh=v/axisMax*ph;
+    const bx=x-(series.length*barW)/2+j*barW;
+    svg.append(el('rect',{x:bx,y:top+ph-bh,width:barW-3,height:bh,rx:3,fill:colors[j%colors.length]}));
+    svg.append(el('text',{x:bx+(barW-3)/2,y:top+ph-bh-5,'text-anchor':'middle','font-size':11,fill:'#1b302b'},v));
+   });
+  });
+  wrap.append(svg);
+  const legend=document.createElement('p');legend.className='small';
+  series.forEach((ser,i)=>{
+   const span=document.createElement('span');span.style.cssText=`display:inline-block;margin-right:16px;color:${colors[i%colors.length]};font-weight:700`;
+   span.textContent='■ '+ser.name;legend.append(span);
+  });wrap.append(legend);
+  const download=document.createElement('button');download.type='button';download.className='secondary';
+  download.textContent='Guardar gráfica como SVG';
+  download.onclick=()=>{
+   const content=new XMLSerializer().serializeToString(svg);
+   const blob=new Blob([content],{type:'image/svg+xml;charset=utf-8'});
+   const url=URL.createObjectURL(blob),a=document.createElement('a');
+   a.href=url;a.download='papeleria-'+title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-')+'.svg';
+   a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+  wrap.append(download);charts.append(wrap);
+ }
+ function render(){
+  charts.replaceChildren();
+  const sessions=[...grouped.get(selector.value)].sort((a,b)=>(a.fecha?.toMillis?.()||0)-(b.fecha?.toMillis?.()||0));
+  const completed=sessions.filter(s=>s.estado==='finalizada'&&Array.isArray(s.retos)&&s.retos.length===5);
+  const notice=document.createElement('p');notice.className='small muted';
+  notice.textContent=`${sessions.length} sesión(es) recuperadas; ${completed.length} finalizada(s) con cinco retos. Las gráficas por reto usan la sesión finalizada más reciente.`;
+  charts.append(notice);
+  if(!completed.length){const p=document.createElement('p');p.textContent='Aún no hay una sesión completa de cinco retos para graficar.';charts.append(p);return;}
+  const latest=completed[completed.length-1];
+  const retos=[...latest.retos].sort((a,b)=>a.numero-b.numero);
+  chart('Intentos y pistas por reto',retos.map(r=>'Reto '+r.numero),[
+   {name:'Intentos',values:retos.map(r=>Number(r.intentos)||0)},
+   {name:'Pistas',values:retos.map(r=>Number(r.pistas)||0)}
+  ]);
+  chart('Selección de signos por reto',retos.map(r=>'Reto '+r.numero),[
+   {name:'Signos seleccionados',values:retos.map(r=>Array.isArray(r.signos)?r.signos.length:0)}
+  ]);
+  chart('Evolución entre sesiones',completed.map((sesion,i)=>{
+   const fecha=sesion.fecha?.toDate?.();
+   if(!fecha)return 'Sesión '+(i+1);
+   const dia=fecha.toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'2-digit'});
+   const hora=fecha.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',hour12:false});
+   return dia+' '+hora;
+  }),[
+   {name:'Intentos totales',values:completed.map(s=>s.retos.reduce((sum,r)=>sum+(Number(r.intentos)||0),0))},
+   {name:'Pistas totales',values:completed.map(s=>s.retos.reduce((sum,r)=>sum+(Number(r.pistas)||0),0))}
+  ]);
+  if(completed.length===1){const p=document.createElement('p');p.className='small muted';p.textContent='La evolución mostrará una tendencia cuando el estudiante complete más sesiones.';charts.append(p);}
+ }
+ selector.onchange=render;render();out.append(panel);
+}
+
 byId('refreshSessions').onclick=loadHistory;
-onAuthStateChanged(auth,next=>{void displayUser(next);});
+onAuthStateChanged(auth,next=>{void displayUser(next);},e=>{status('Error de autenticación: '+(e.code||e.message));});
 </script></body></html>
