@@ -92,7 +92,24 @@ async function checkProfile(next){
    try{rest=await readProfileRest(next);}catch(e){rest={ok:false,http:'sin respuesta',code:e.name||'ERROR_RED',message:e.message};}
    if(check!==profileCheckNumber)return;
    diagnostic('DIAGNÓSTICO DE DOS VÍAS\n'+identity+'\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nRuta: '+path+'\nLectura SDK: exists() = false\nLectura REST: HTTP '+rest.http+(rest.ok?' — DOCUMENTO ENCONTRADO':' — '+rest.code+' — '+rest.message));
-   if(!rest.ok){status('La lectura REST tampoco pudo abrir el perfil. Consulta el diagnóstico.');return;}
+   if(!rest.ok){
+    // Compara ambos documentos docentes que existen en la consola, sin modificar datos.
+    const candidates=['yhU8ZSQdGlPJweCv3ByoSnnfxL33','yhU8ZSQdGIPJweCv3ByoSnnfxL33'];
+    const checks=[];
+    for(const candidate of candidates){
+      try{
+        const token=await next.getIdToken();
+        const target='https://firestore.googleapis.com/v1/projects/'+firebaseConfig.projectId+'/databases/(default)/documents/Usuarios/'+encodeURIComponent(candidate);
+        const result=await fetch(target,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+        checks.push(candidate+' → HTTP '+result.status);
+      }catch(error){checks.push(candidate+' → '+error.message);}
+    }
+    if(check!==profileCheckNumber)return;
+    const detail='\n\nCOMPROBACIÓN DE AMBOS DOCUMENTOS (sin cambiar Firebase):\n'+checks.join('\n')+'\n\nInterpretación: 200 = documento accesible; 403 = acceso denegado; 404 = no encontrado en la ruta consultada.';
+    byId('diagnosticText').textContent+=detail;
+    status('No se pudo abrir el perfil. Revisa la comprobación de ambos documentos.');
+    return;
+   }
    profile=rest.profile;
   }else{
    profile=snap.data();
