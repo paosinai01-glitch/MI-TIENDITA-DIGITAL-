@@ -51,7 +51,7 @@ $('route').addEventListener('change',()=>{renderCart()});$('start').onclick=star
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js';
-import {getFirestore,doc,getDocFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
+import {getFirestore,doc,getDocFromServer,getDocsFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
 const firebaseConfig={apiKey:'AIzaSyA36PzVwed30aDC0KZQDefHJmT63GiOle4',authDomain:'mi-tiendita-digital-v4.firebaseapp.com',projectId:'mi-tiendita-digital-v4',storageBucket:'mi-tiendita-digital-v4.firebasestorage.app',messagingSenderId:'395051599416',appId:'1:395051599416:web:5a696e57464f4223e588cd'};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const byId=id=>document.getElementById(id);
@@ -74,7 +74,20 @@ async function checkProfile(next){
   if(check!==profileCheckNumber)return;
   if(!snap.exists()){
    status('Firestore respondió desde el SERVIDOR que no encontró el perfil.');
-   diagnostic('Prueba: lectura directa del SERVIDOR (sin caché)\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nUID: '+next.uid+'\nRuta: '+path+'\nResultado: exists() = false\n\nEl documento sí aparece en tus capturas. Este resultado apunta a una diferencia entre la base de datos visible en la consola y la que responde a la aplicación.');
+   let result='Consulta individual: exists() = false';
+   try {
+    const all=await getDocsFromServer(collection(db,'Usuarios'));
+    const exact=all.docs.some(d=>d.id===next.uid);
+    result+='\nConsulta de la colección: '+all.size+' documento(s) visibles';
+    result+='\n¿El UID aparece en la colección?: '+(exact?'SÍ':'NO');
+    if(exact)result+='\nADVERTENCIA: la consulta de la colección sí lo encuentra; revisar diferencia de consulta individual.';
+    else result+='\nLa colección no devuelve ese UID. Revisar base de datos/proyecto y permisos de lectura.';
+   } catch(err) {
+    result+='\nConsulta de la colección: ERROR '+(err.code||'sin código')+' — '+err.message;
+    result+='\nSi es permission-denied, la regla de listado docente no autorizó esta consulta.';
+   }
+   if(check!==profileCheckNumber)return;
+   diagnostic('Prueba: servidor (sin caché)\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nUID: '+next.uid+'\nRuta: '+path+'\n'+result);
    return;
   }
   profile=snap.data();
