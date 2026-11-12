@@ -5,7 +5,7 @@
 </style></head><body>
 <header><h1>✏️ Mi Tiendita Digital</h1><p>La papelería escolar · Resuelve, compra y aprende</p></header>
 <main>
-<section class="card" id="loginCard"><h2>Acceso a Mi Tiendita</h2><p>Ingresa con el correo y contraseña asignados por tu docente.</p><label>Correo electrónico <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="loginPassword" type="password" autocomplete="current-password"></label><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p><div id="accessDiagnostics" class="hint hide" aria-live="polite"><strong>Verificación de identidad y acceso</strong><p id="diagnosticText" style="white-space:pre-wrap;overflow-wrap:anywhere"></p><button id="retryProfile" type="button" class="secondary">Volver a comprobar perfil</button></div></section>
+<section class="card" id="loginCard"><h2>Acceso a Mi Tiendita</h2><p>Ingresa con el correo y contraseña asignados por tu docente.</p><label>Correo electrónico <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="loginPassword" type="password" autocomplete="current-password"></label><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p><div id="accessDiagnostics" class="hint hide" aria-live="polite"><strong>Verificación de identidad y acceso</strong><p id="diagnosticText" style="white-space:pre-wrap;overflow-wrap:anywhere"></p><button id="copySessionUid" type="button" class="secondary">Copiar UID exacto de la sesión</button> <button id="retryProfile" type="button" class="secondary">Volver a comprobar perfil</button></div></section>
 <section class="card hide" id="teacherPanel"><h2>Panel docente · Historial</h2><p>Consulta las sesiones de estudiantes registrados. Solo disponible para cuentas con rol docente.</p><button id="refreshSessions" type="button">Actualizar historial</button><div id="sessionsList" aria-live="polite"></div></section>
 <div id="studentApp" class="hide">
 <section class="card" id="setup"><h2>1. Elige tu ruta matemática</h2><label for="route">Ruta de aprendizaje</label> <select id="route"><option value="a">Ruta A · Suma y resta</option><option value="b">Ruta B · Multiplicación y división</option></select><p class="muted small">Puedes trabajar con papel y lápiz. La tiendita no resolverá las operaciones por ti.</p></section>
@@ -82,7 +82,7 @@ async function checkProfile(next){
  if(!next){status('Inicia sesión para continuar.');return;}
  status('Verificando el perfil de Firestore…');
  const path='Usuarios/'+next.uid;
- const identity='Correo autenticado: '+(next.email||'(sin correo)')+'\nUID real de la sesión: '+next.uid+'\nLongitud del UID: '+next.uid.length;
+ const identity='Correo autenticado: '+(next.email||'(sin correo)')+'\nUID real de la sesión: '+next.uid+'\nLongitud del UID: '+next.uid.length+'\nCaracteres del UID (Unicode): '+[...next.uid].map((c,i)=>`${i+1}:${c}(${c.codePointAt(0)})`).join(' ');
  try{
   const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
   if(check!==profileCheckNumber)return;
@@ -113,6 +113,7 @@ async function checkProfile(next){
  }
 }
 byId('retryProfile').onclick=()=>checkProfile(auth.currentUser);
+byId('copySessionUid').onclick=async()=>{const uid=auth.currentUser?.uid;if(!uid){status('Inicia sesión antes de copiar el UID.');return;}try{await navigator.clipboard.writeText(uid);status('UID exacto copiado. Úsalo como ID del documento en Firestore.');}catch(e){window.prompt('Copia este UID exacto:',uid);}};
 
 window.v4Ready=()=>!!(user && profile && profile.activo===true && profile.rol==='alumno' && !sessionOpen);
 window.v4HasOpenSession=()=>sessionOpen;
