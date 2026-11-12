@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#176b57"><title>Mi Tiendita Digital · Papelería V3</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#176b57"><title>Mi Tiendita Digital · Papelería V4</title>
 <style>
 :root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#1b302b;background:#f3f7f5}*{box-sizing:border-box}body{margin:0}header{background:#176b57;color:#fff;padding:22px 15px;text-align:center}header h1{margin:0;font-size:clamp(1.6rem,5vw,2.3rem)}header p{margin:7px 0 0}main{max-width:980px;margin:auto;padding:14px}.card{background:white;border:1px solid #d8e4df;border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 2px 8px #123b2b0b}h2{margin:0 0 13px;font-size:1.22rem}h3{margin:9px 0}button,input,select{font:inherit}button{background:#176b57;color:white;border:0;border-radius:11px;padding:11px 14px;font-weight:650;cursor:pointer;min-height:44px}button.secondary{background:#e4f1ea;color:#135a45}button.danger{background:#a13939}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e4a72b;outline-offset:2px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}.product{border:1px solid #dce7e1;border-radius:14px;padding:12px;text-align:center;background:#fbfdfc}.emoji{font-size:2.6rem}.price{font-weight:750;margin:6px 0}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}.muted{color:#4b645b}.pill{display:inline-block;border-radius:99px;padding:6px 10px;background:#e6f3ec;color:#165b46;font-weight:700}.budget{background:#e7f4ed;border-color:#93c5a7}.budget strong{font-size:1.5rem}.quantity{width:72px;padding:10px;border:1px solid #9bb5a7;border-radius:10px}select,.answer{padding:11px;border:1px solid #8ba99c;border-radius:10px;max-width:100%;background:#fff}.answer{width:180px}.cartline{padding:9px 0;border-bottom:1px solid #e3ece7}.hint{background:#fff8e9;border:1px solid #f0d79b;border-radius:12px;padding:14px;margin-top:12px}.task{background:#f0f7f3;border-radius:12px;padding:16px;margin:12px 0;font-size:1.05rem}.status{min-height:1.6em;font-weight:650;margin-top:10px}.success{color:#176b57}.warning{color:#a13939}.sign{font-size:1.45rem;min-width:64px}.sign[aria-pressed=true]{background:#f0ad36;color:#1b302b;outline:2px solid #a76a00}.hide{display:none!important}.progress{height:12px;background:#dcebe3;border-radius:30px;overflow:hidden}.progress span{display:block;height:100%;background:#1c8765;transition:width .2s}.small{font-size:.9rem}footer{text-align:center;padding:20px;color:#4b645b}@media(max-width:480px){.card{padding:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product button{width:100%}}
 </style></head><body>
 <header><h1>✏️ Mi Tiendita Digital</h1><p>La papelería escolar · Resuelve, compra y aprende</p></header>
 <main>
-<section class="card" id="loginCard"><h2>Acceso a Mi Tiendita</h2><p>Ingresa con el correo y contraseña asignados por tu docente.</p><label>Correo electrónico <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="loginPassword" type="password" autocomplete="current-password"></label><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p></section>
+<section class="card" id="loginCard"><h2>Acceso a Mi Tiendita</h2><p>Ingresa con el correo y contraseña asignados por tu docente.</p><label>Correo electrónico <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></label><label>Contraseña <input id="loginPassword" type="password" autocomplete="current-password"></label><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p><div id="accessDiagnostics" class="hint hide" aria-live="polite"><strong>Diagnóstico del acceso</strong><p id="diagnosticText" style="white-space:pre-wrap;overflow-wrap:anywhere"></p><button id="retryProfile" type="button" class="secondary">Volver a comprobar perfil</button></div></section>
 <section class="card hide" id="teacherPanel"><h2>Panel docente · Historial</h2><p>Consulta las sesiones de estudiantes registrados. Solo disponible para cuentas con rol docente.</p><button id="refreshSessions" type="button">Actualizar historial</button><div id="sessionsList" aria-live="polite"></div></section>
 <div id="studentApp" class="hide">
 <section class="card" id="setup"><h2>1. Elige tu ruta matemática</h2><label for="route">Ruta de aprendizaje</label> <select id="route"><option value="a">Ruta A · Suma y resta</option><option value="b">Ruta B · Multiplicación y división</option></select><p class="muted small">Puedes trabajar con papel y lápiz. La tiendita no resolverá las operaciones por ti.</p></section>
@@ -14,7 +14,7 @@
 <section class="card" id="cartSection"><h2>3. Revisa tu carrito</h2><div id="cart" aria-live="polite">Tu carrito está vacío.</div><p class="muted small">No mostramos el total: tendrás que calcularlo en los retos.</p><div class="row"><button id="start" disabled>Iniciar 5 retos</button><button id="clear" class="secondary">Vaciar carrito</button></div><p id="cartStatus" class="status" role="status"></p></section>
 <section class="card hide" id="challenge" aria-live="polite"><div class="row space"><h2>4. Resuelve tus retos</h2><span class="pill" id="counter">Reto 1 de 5</span></div><div class="progress" aria-label="Progreso de los retos"><span id="bar" style="width:0%"></span></div><div id="task" class="task"></div><p class="muted small">Escribe tu procedimiento en tu cuaderno. No se muestra el resultado antes de responder.</p><label for="answer"><strong>Tu respuesta:</strong></label><div class="row"><input class="answer" id="answer" type="number" inputmode="decimal" step="any" placeholder="Escribe un número"><button id="check">Comprobar</button></div><div class="row" style="margin-top:10px"><button class="secondary" id="hintButton">💡 Necesito una pista</button></div><div id="hint" class="hint hide"><strong>¿Qué operación te ayuda?</strong><p id="hintQuestion"></p><div class="row" id="signs"></div><p class="status" id="signFeedback" role="status"></p></div><p id="feedback" class="status" role="status"></p><button id="next" class="hide">Siguiente reto →</button></section>
 <section class="card hide" id="finish"><h2>🎉 ¡Compra completada!</h2><p>Resolviste los cinco retos. Se descontó de tu presupuesto el costo de los productos.</p><p><strong>Dinero restante: <span id="finalBalance"></span></strong></p><button id="again">Hacer otra compra</button><button class="secondary" id="reset">Comenzar de nuevo con $200</button></section>
-<section class="card"><h2>Para la actividad en clase</h2><p class="small">Cada estudiante resuelve sus propias operaciones. Las pistas orientan la elección del signo, sin dar la respuesta numérica. Las respuestas y el saldo se mantienen en este dispositivo mientras la página esté abierta. No se recopilan nombres ni calificaciones.</p></section>
+<section class="card"><h2>Para la actividad en clase</h2><p class="small">Cada estudiante resuelve sus propias operaciones. Las pistas orientan la elección del signo, sin dar la respuesta numérica. Los intentos, las pistas y los signos elegidos se guardan en Firebase para que la docente pueda revisar el proceso. No escribas datos personales en las respuestas.</p></section>
 </div></main><footer>Mi Tiendita Digital · Recurso didáctico de aritmética · Versión 4</footer>
 <script>
 'use strict';
@@ -57,6 +57,44 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const byId=id=>document.getElementById(id);
 let user=null,profile=null,sessionRef=null,sessionRetos=[],sessionOpen=false;
 const status=message=>byId('loginStatus').textContent=message;
+const diagnostic=(message,visible=true)=>{byId('diagnosticText').textContent=message;byId('accessDiagnostics').classList.toggle('hide',!visible);};
+let profileCheckNumber=0;
+async function checkProfile(next){
+ const check=++profileCheckNumber;
+ user=next;profile=null;
+ byId('studentApp').classList.add('hide');
+ byId('teacherPanel').classList.add('hide');
+ byId('logoutButton').classList.toggle('hide',!next);
+ diagnostic('',false);
+ if(!next){status('Inicia sesión para continuar.');return;}
+ status('Verificando el perfil de Firestore…');
+ const path='Usuarios/'+next.uid;
+ try{
+  const snap=await getDoc(doc(db,'Usuarios',next.uid));
+  if(check!==profileCheckNumber)return;
+  if(!snap.exists()){
+   status('La autenticación funciona, pero no se encontró tu perfil de Firestore.');
+   diagnostic('Proyecto: '+app.options.projectId+'\nUID de esta sesión: '+next.uid+'\nRuta consultada: '+path+'\n\nEn Firebase > Firestore > Datos > Usuarios, el ID del documento debe coincidir EXACTAMENTE con este UID. No cambies las reglas ni la contraseña. Si no coincide, hay que corregir el documento de perfil, no el inicio de sesión.');
+   return;
+  }
+  profile=snap.data();
+  if(profile.activo!==true)throw Error('El perfil existe, pero el campo activo no es true.');
+  if(profile.rol==='docente'){
+   status('Acceso docente autorizado.');
+   byId('teacherPanel').classList.remove('hide');
+   await loadHistory();
+  }else if(profile.rol==='alumno'){
+   status('Acceso autorizado: grupo '+profile.grupo+', lista '+profile.numeroLista+'.');
+   byId('studentApp').classList.remove('hide');
+  }else throw Error('El perfil existe, pero el rol no es docente ni alumno.');
+ }catch(e){
+  if(check!==profileCheckNumber)return;
+  status('No se pudo cargar el perfil: '+e.message);
+  diagnostic('Proyecto: '+app.options.projectId+'\nUID: '+next.uid+'\nRuta: '+path+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message);
+ }
+}
+byId('retryProfile').onclick=()=>checkProfile(auth.currentUser);
+
 window.v4Ready=()=>!!(user && profile && profile.activo===true && profile.rol==='alumno' && !sessionOpen);
 window.v4HasOpenSession=()=>sessionOpen;
 window.v4CreateSession=async initial=>{
@@ -82,8 +120,5 @@ async function loadHistory(){const out=byId('sessionsList');out.textContent='Car
  if(!count)out.textContent='Todavía no hay sesiones guardadas.';
  }catch(e){out.textContent='Error al consultar historial: '+e.message;}};
 byId('refreshSessions').onclick=loadHistory;
-onAuthStateChanged(auth,async next=>{user=next;profile=null;byId('studentApp').classList.add('hide');byId('teacherPanel').classList.add('hide');byId('logoutButton').classList.toggle('hide',!next);if(!next){status('Inicia sesión para continuar.');return;}
- try{const snap=await getDoc(doc(db,'Usuarios',next.uid));if(!snap.exists())throw Error('No existe el perfil de Firestore para esta cuenta.');profile=snap.data();if(profile.activo!==true)throw Error('La cuenta no está activa.');if(profile.rol==='docente'){status('Acceso docente autorizado.');byId('teacherPanel').classList.remove('hide');await loadHistory();}else if(profile.rol==='alumno'){status('Acceso autorizado: grupo '+profile.grupo+', lista '+profile.numeroLista+'.');byId('studentApp').classList.remove('hide');}else throw Error('Rol no reconocido.');}
- catch(e){status('No se pudo cargar el perfil: '+e.message);}
-});
+onAuthStateChanged(auth,next=>{void checkProfile(next);});
 </script></body></html>
