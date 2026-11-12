@@ -51,7 +51,7 @@ $('route').addEventListener('change',()=>{renderCart()});$('start').onclick=star
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js';
-import {getFirestore,doc,getDoc,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
+import {getFirestore,doc,getDocFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
 const firebaseConfig={apiKey:'AIzaSyA36PzVwed30aDC0KZQDefHJmT63GiOle4',authDomain:'mi-tiendita-digital-v4.firebaseapp.com',projectId:'mi-tiendita-digital-v4',storageBucket:'mi-tiendita-digital-v4.firebasestorage.app',messagingSenderId:'395051599416',appId:'1:395051599416:web:5a696e57464f4223e588cd'};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const byId=id=>document.getElementById(id);
@@ -70,27 +70,27 @@ async function checkProfile(next){
  status('Verificando el perfil de Firestore…');
  const path='Usuarios/'+next.uid;
  try{
-  const snap=await getDoc(doc(db,'Usuarios',next.uid));
+  const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
   if(check!==profileCheckNumber)return;
   if(!snap.exists()){
-   status('La autenticación funciona, pero no se encontró tu perfil de Firestore.');
-   diagnostic('Proyecto: '+app.options.projectId+'\nUID de esta sesión: '+next.uid+'\nRuta consultada: '+path+'\n\nEn Firebase > Firestore > Datos > Usuarios, el ID del documento debe coincidir EXACTAMENTE con este UID. No cambies las reglas ni la contraseña. Si no coincide, hay que corregir el documento de perfil, no el inicio de sesión.');
+   status('Firestore respondió desde el SERVIDOR que no encontró el perfil.');
+   diagnostic('Prueba: lectura directa del SERVIDOR (sin caché)\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nUID: '+next.uid+'\nRuta: '+path+'\nResultado: exists() = false\n\nEl documento sí aparece en tus capturas. Este resultado apunta a una diferencia entre la base de datos visible en la consola y la que responde a la aplicación.');
    return;
   }
   profile=snap.data();
   if(profile.activo!==true)throw Error('El perfil existe, pero el campo activo no es true.');
   if(profile.rol==='docente'){
-   status('Acceso docente autorizado.');
+   status('Acceso docente autorizado (perfil verificado en servidor).');
    byId('teacherPanel').classList.remove('hide');
    await loadHistory();
   }else if(profile.rol==='alumno'){
-   status('Acceso autorizado: grupo '+profile.grupo+', lista '+profile.numeroLista+'.');
+   status('Acceso autorizado (servidor): grupo '+profile.grupo+', lista '+profile.numeroLista+'.');
    byId('studentApp').classList.remove('hide');
   }else throw Error('El perfil existe, pero el rol no es docente ni alumno.');
  }catch(e){
   if(check!==profileCheckNumber)return;
   status('No se pudo cargar el perfil: '+e.message);
-  diagnostic('Proyecto: '+app.options.projectId+'\nUID: '+next.uid+'\nRuta: '+path+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message);
+  diagnostic('Prueba: lectura directa del SERVIDOR (sin caché)\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nUID: '+next.uid+'\nRuta: '+path+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message);
  }
 }
 byId('retryProfile').onclick=()=>checkProfile(auth.currentUser);
