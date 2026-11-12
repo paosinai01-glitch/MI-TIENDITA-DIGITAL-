@@ -59,6 +59,19 @@ let user=null,profile=null,sessionRef=null,sessionRetos=[],sessionOpen=false;
 const status=message=>byId('loginStatus').textContent=message;
 const diagnostic=(message,visible=true)=>{byId('diagnosticText').textContent=message;byId('accessDiagnostics').classList.toggle('hide',!visible);};
 let profileCheckNumber=0;
+// Segunda vía de lectura: API REST oficial de Firestore, con el token de la sesión.
+// El token se usa solo en la solicitud y nunca se imprime ni se guarda.
+async function readProfileRest(account){
+ const token=await account.getIdToken();
+ const url='https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(firebaseConfig.projectId)+'/databases/(default)/documents/Usuarios/'+encodeURIComponent(account.uid);
+ const response=await fetch(url,{method:'GET',headers:{Authorization:'Bearer '+token},cache:'no-store'});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok)return {ok:false,http:response.status,code:data.error?.status||'SIN_CODIGO',message:data.error?.message||'Sin detalle'};
+ const fields=data.fields||{};
+ const value=k=>fields[k]?.stringValue??fields[k]?.booleanValue??fields[k]?.integerValue??null;
+ return {ok:true,http:response.status,profile:{rol:value('rol'),activo:value('activo'),grupo:value('grupo'),numeroLista:value('numeroLista')}};
+}
+
 async function checkProfile(next){
  const check=++profileCheckNumber;
  user=next;profile=null;
@@ -73,31 +86,23 @@ async function checkProfile(next){
   const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
   if(check!==profileCheckNumber)return;
   if(!snap.exists()){
-   status('Firestore respondió desde el SERVIDOR que no encontró el perfil.');
-   let result='Consulta individual: exists() = false';
-   try {
-    const all=await getDocsFromServer(collection(db,'Usuarios'));
-    const exact=all.docs.some(d=>d.id===next.uid);
-    result+='\nConsulta de la colección: '+all.size+' documento(s) visibles';
-    result+='\n¿El UID aparece en la colección?: '+(exact?'SÍ':'NO');
-    if(exact)result+='\nADVERTENCIA: la consulta de la colección sí lo encuentra; revisar diferencia de consulta individual.';
-    else result+='\nLa colección no devuelve ese UID. Revisar base de datos/proyecto y permisos de lectura.';
-   } catch(err) {
-    result+='\nConsulta de la colección: ERROR '+(err.code||'sin código')+' — '+err.message;
-    result+='\nSi es permission-denied, la regla de listado docente no autorizó esta consulta.';
-   }
+   status('La lectura SDK no encontró el perfil. Probando lectura REST oficial…');
+   let rest;
+   try{rest=await readProfileRest(next);}catch(e){rest={ok:false,http:'sin respuesta',code:e.name||'ERROR_RED',message:e.message};}
    if(check!==profileCheckNumber)return;
-   diagnostic('Prueba: servidor (sin caché)\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nUID: '+next.uid+'\nRuta: '+path+'\n'+result);
-   return;
+   diagnostic('DIAGNÓSTICO DE DOS VÍAS\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nRuta: '+path+'\nLectura SDK: exists() = false\nLectura REST: HTTP '+rest.http+(rest.ok?' — DOCUMENTO ENCONTRADO':' — '+rest.code+' — '+rest.message));
+   if(!rest.ok){status('La lectura REST tampoco pudo abrir el perfil. Consulta el diagnóstico.');return;}
+   profile=rest.profile;
+  }else{
+   profile=snap.data();
   }
-  profile=snap.data();
   if(profile.activo!==true)throw Error('El perfil existe, pero el campo activo no es true.');
   if(profile.rol==='docente'){
-   status('Acceso docente autorizado (perfil verificado en servidor).');
+   status('Acceso docente autorizado.');
    byId('teacherPanel').classList.remove('hide');
    await loadHistory();
   }else if(profile.rol==='alumno'){
-   status('Acceso autorizado (servidor): grupo '+profile.grupo+', lista '+profile.numeroLista+'.');
+   status('Acceso autorizado: grupo '+profile.grupo+', lista '+profile.numeroLista+'.');
    byId('studentApp').classList.remove('hide');
   }else throw Error('El perfil existe, pero el rol no es docente ni alumno.');
  }catch(e){
