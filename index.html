@@ -137,6 +137,30 @@ main:has(#loginCard:not(.hide)) #sessionBar{display:none!important}
   padding:18px 16px!important;
  }
 }
+
+/* Corrección definitiva de estado: nunca renderizar el fondo durante una sesión */
+#loginCard.hide,.eti-hero.hide{display:none!important}
+body:has(#sessionBar:not(.hide)){background:linear-gradient(135deg,#fff8ef,#fce9e4 60%,#fff8ef)!important}
+main:has(#sessionBar:not(.hide)){position:static!important;min-height:0!important;max-width:1200px!important;margin:auto!important;padding:0 18px 26px!important}
+main:has(#sessionBar:not(.hide)) #studentApp,main:has(#sessionBar:not(.hide)) #teacherPanel{position:relative!important;z-index:1!important}
+/* La tarjeta real cubre por completo el formulario impreso en el fondo. */
+main:has(#loginCard:not(.hide)) #loginCard{
+ width:min(82vw,960px)!important;max-width:960px!important;
+ min-height:clamp(530px,42vw,690px)!important;
+ top:63%!important;left:50%!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ background:#fffaf3!important;opacity:1!important;
+ border:4px solid #891238!important;border-radius:42px!important;
+ padding:35px 28px!important;
+}
+main:has(#loginCard:not(.hide)) #loginCard #studentLoginFields,
+main:has(#loginCard:not(.hide)) #loginCard #teacherLoginFields,
+main:has(#loginCard:not(.hide)) #loginCard p:has(#loginPassword){width:min(100%,510px)!important;max-width:510px!important}
+main:has(#loginCard:not(.hide)) #loginCard h2{font-size:clamp(1.7rem,3vw,2.25rem)!important}
+@media(max-width:680px){
+ main:has(#loginCard:not(.hide)){min-height:max(100svh,160vw)!important}
+ main:has(#loginCard:not(.hide)) #loginCard{width:calc(100% - 24px)!important;min-height:0!important;top:62%!important;padding:24px 16px!important;border-radius:24px!important}
+}
 </style></head><body>
 <header class="sr-only"><h1>Papelería Digital ETI 96</h1><p>Retos Matemáticos</p></header>
 <main>
@@ -245,6 +269,7 @@ async function displayUser(next){
  byId('studentApp').classList.add('hide');byId('teacherPanel').classList.add('hide');
  byId('logoutButton').classList.toggle('hide',!next);
  byId('etiHero').classList.toggle('hide',!!next);
+ byId('loginCard').classList.toggle('hide',!!next);
  byId('sessionBar').classList.toggle('hide',!next);
  byId('sessionIdentity').textContent=next ? (next.uid===DOCENTE_UID?'Acceso docente':(studentFromEmail(next.email)?`Grupo ${studentFromEmail(next.email).grupo} · Lista ${studentFromEmail(next.email).numeroLista}`:'Sesión iniciada')) : '';
  if(!next){status('Inicia sesión para continuar.');return;}
