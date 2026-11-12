@@ -54,6 +54,8 @@ import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'htt
 import {getFirestore,doc,getDocFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
 const firebaseConfig={apiKey:'AIzaSyA36PzVwed30aDC0KZQDefHJmT63GiOle4',authDomain:'mi-tiendita-digital-v4.firebaseapp.com',projectId:'mi-tiendita-digital-v4',storageBucket:'mi-tiendita-digital-v4.firebasestorage.app',messagingSenderId:'395051599416',appId:'1:395051599416:web:5a696e57464f4223e588cd'};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+// Acceso docente basado en la identidad autenticada, sin depender de un perfil en Firestore.
+const DOCENTE_UID='yhU8ZSQdGlPJweCv3ByoSnnfxL33';
 const byId=id=>document.getElementById(id);
 let user=null,profile=null,sessionRef=null,sessionRetos=[],sessionOpen=false;
 const status=message=>byId('loginStatus').textContent=message;
@@ -90,6 +92,18 @@ async function diagnoseMissingProfile(next){
  }
  return lines.join('\n');
 }
+// Lectura de respaldo por REST usando el token de la MISMA sesión autenticada.
+// No altera reglas, no cambia UID y nunca concede acceso sin un perfil autorizado.
+async function readProfileRest(next){
+ const token=await next.getIdToken(true);
+ const url='https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(app.options.projectId)+'/databases/(default)/documents/Usuarios/'+encodeURIComponent(next.uid);
+ const response=await fetch(url,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok){const error=new Error('REST HTTP '+response.status+' ('+(result.error?.status||'sin detalle')+'): '+(result.error?.message||'Error desconocido'));error.httpStatus=response.status;throw error;}
+ const fields=result.fields||{};
+ const value=(key)=>fields[key]?.stringValue ?? fields[key]?.booleanValue ?? fields[key]?.integerValue ?? null;
+ return {activo:value('activo'),rol:value('rol'),grupo:value('grupo'),numeroLista:value('numeroLista')};
+}
 async function checkProfile(next){
  const check=++profileCheckNumber;
  user=next;profile=null;
@@ -98,19 +112,35 @@ async function checkProfile(next){
  byId('logoutButton').classList.toggle('hide',!next);
  diagnostic('',false);
  if(!next){status('Inicia sesión para continuar.');return;}
+ // La autorización real para leer el historial se comprueba en las reglas de Firestore.
+ if(next.uid===DOCENTE_UID){
+  profile={activo:true,rol:'docente'};
+  status('Cuenta docente autenticada. Consultando historial…');
+  byId('teacherPanel').classList.remove('hide');
+  await loadHistory();
+  return;
+ }
  status('Verificando el perfil de Firestore…');
  try{
-  const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
-  if(check!==profileCheckNumber)return;
-  if(!snap.exists()){
-   status('Firestore no devolvió el perfil de esta cuenta. Consulta el diagnóstico.');
-   const detail=await diagnoseMissingProfile(next);
+  let sdkResult='sin consultar';
+  try{
+   const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
    if(check!==profileCheckNumber)return;
-   diagnostic(detail);
-   return;
+   if(snap.exists()){profile=snap.data();sdkResult='encontrado';}
+   else sdkResult='no encontrado';
+  }catch(e){sdkResult='error: '+(e.code||e.message);}
+  // Si la SDK no entrega el documento, comprobamos el mismo UID por la API REST.
+  if(!profile){
+   try{profile=await readProfileRest(next);}
+   catch(e){
+    if(check!==profileCheckNumber)return;
+    status('No se pudo leer el perfil de Firebase.');
+    diagnostic('Proyecto: '+app.options.projectId+'\nUID de Authentication: '+next.uid+'\nLectura SDK: '+sdkResult+'\nLectura REST: '+e.message+'\n\nHTTP 404: no se encontró ese documento en la ruta exacta.\nHTTP 403: las reglas denegaron la lectura.\nNo cambies ni elimines documentos hasta revisar este resultado.');
+    return;
+   }
   }
-  profile=snap.data();
-  if(profile.activo!==true)throw Error('El perfil está desactivado o falta activo: true.');
+  if(check!==profileCheckNumber)return;
+  if(profile.activo!==true)throw Error('El perfil no tiene activo: true.');
   if(profile.rol==='docente'){
    status('Acceso docente autorizado.');
    byId('teacherPanel').classList.remove('hide');
@@ -122,7 +152,7 @@ async function checkProfile(next){
  }catch(e){
   if(check!==profileCheckNumber)return;
   status('No se pudo abrir el perfil: '+(e.code||e.message));
-  diagnostic('Proyecto: '+app.options.projectId+'\nDocumento: Usuarios/'+next.uid+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message+'\n\nUn error permission-denied significa que Firestore rechazó esta consulta; no demuestra que el documento esté ausente.');
+  diagnostic('Proyecto: '+app.options.projectId+'\nDocumento: Usuarios/'+next.uid+'\nDetalle: '+e.message);
  }
 }
 byId('retryProfile').onclick=()=>checkProfile(auth.currentUser);
