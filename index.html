@@ -78,11 +78,70 @@ main > #teacherPanel,main > #studentApp{max-width:1160px;margin:18px auto;paddin
 #sessionBar #logoutButton{margin:0;min-height:42px}
 #sessionBar #sessionIdentity{font-size:.95rem}
 @media(max-width:600px){#sessionBar{margin:10px 12px;gap:8px}#sessionBar strong{width:100%}}
+
+/* ETI96 final: banner and form are siblings, never overlap */
+.eti-hero{display:block!important;position:relative!important;max-width:none!important;width:100%!important;height:clamp(220px,34vw,490px)!important;min-height:0!important;aspect-ratio:auto!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:#f7e4d9!important;box-shadow:none!important}
+.eti-hero-image{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;background-image:url("portada_eti96.webp")!important;background-repeat:no-repeat!important;background-position:center top!important;background-size:cover!important;z-index:0!important}
+#loginCard{display:block;position:relative!important;inset:auto!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;float:none!important;clear:both!important;width:min(94%,590px)!important;max-width:590px!important;height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;margin:28px auto 40px!important;padding:24px 28px!important;background:#fffaf5!important;border:2px solid #850d35!important;border-radius:22px!important;box-sizing:border-box!important;box-shadow:0 8px 24px #67122d24!important;z-index:1!important}
+#loginCard.hide{display:none!important}
+body:has(#sessionBar:not(.hide)) .eti-hero,body:has(#sessionBar:not(.hide)) #loginCard{display:none!important}
+@media(max-width:600px){.eti-hero{height:clamp(180px,45vw,320px)!important}.eti-hero-image{background-size:cover!important}#loginCard{margin:16px auto 28px!important;padding:20px 16px!important}}
+
+/* Pantalla de acceso: ilustración COMPLETA, sin recortes, y formulario central superpuesto */
+body:has(#loginCard:not(.hide)) {background:#f8e5da!important}
+main:has(#loginCard:not(.hide)){
+ position:relative!important;
+ width:100%!important;max-width:none!important;
+ min-height:max(100svh,61.893vw)!important;
+ margin:0!important;padding:0!important;
+ isolation:isolate;
+}
+main:has(#loginCard:not(.hide)) .eti-hero{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;max-width:none!important;
+ margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;overflow:hidden!important;
+ display:block!important;
+}
+main:has(#loginCard:not(.hide)) .eti-hero-image{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ background-image:url("portada_eti96.webp")!important;
+ background-size:100% 100%!important;
+ background-position:center center!important;
+ background-repeat:no-repeat!important;
+}
+main:has(#loginCard:not(.hide)) #loginCard{
+ position:absolute!important;top:62%!important;left:50%!important;
+ right:auto!important;bottom:auto!important;
+ transform:translate(-50%,-50%)!important;
+ width:min(92vw,580px)!important;max-width:580px!important;
+ margin:0!important;padding:22px 28px!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ overflow:visible!important;
+ border:3px solid #8c1237!important;border-radius:27px!important;
+ background:#fff9f3!important;opacity:1!important;
+ box-shadow:0 15px 40px #48082155!important;
+ z-index:4!important;
+}
+main:has(#loginCard:not(.hide)) #loginCard input,
+main:has(#loginCard:not(.hide)) #loginCard select{background:#fff!important}
+main:has(#loginCard:not(.hide)) #sessionBar{display:none!important}
+@media(max-width:680px){
+ main:has(#loginCard:not(.hide)){min-height:max(100svh,120vw)!important}
+ main:has(#loginCard:not(.hide)) .eti-hero-image{
+  background-size:auto 100%!important;background-position:50% center!important;
+ }
+ main:has(#loginCard:not(.hide)) #loginCard{
+  top:65%!important;width:calc(100% - 24px)!important;
+  padding:18px 16px!important;
+ }
+}
 </style></head><body>
 <header class="sr-only"><h1>Papelería Digital ETI 96</h1><p>Retos Matemáticos</p></header>
 <main>
 <div class="eti-hero" id="etiHero"><div class="eti-hero-image" role="img" aria-label="Papelería Digital ETI 96, ajolote con lápiz y calculadora y fondo ilustrado de papelería"></div>
-<section class="card" id="loginCard"><h2>¡Inicia sesión!</h2><p class="login-help">Elige cómo ingresar a tu papelería.</p><div class="row"><label><input type="radio" name="tipoAcceso" value="alumno" checked> Alumno</label><label><input type="radio" name="tipoAcceso" value="docente"> Docente</label></div><div id="studentLoginFields"><label for="loginGroup">Grupo</label> <select id="loginGroup"><option value="2J">2.º J</option><option value="2L">2.º L</option></select> <label for="loginNumber">Número de lista (01 a 55)</label> <input id="loginNumber" type="number" min="1" max="55" step="1" inputmode="numeric" placeholder="Ej. 05"></div><div id="teacherLoginFields" class="hide"><label for="loginEmail">Correo docente</label> <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></div><p><label for="loginPassword">Contraseña</label> <input id="loginPassword" type="password" autocomplete="current-password"></p><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p></section></div>
+</div><section class="card" id="loginCard"><h2>¡Inicia sesión!</h2><p class="login-help">Elige cómo ingresar a tu papelería.</p><div class="row"><label><input type="radio" name="tipoAcceso" value="alumno" checked> Alumno</label><label><input type="radio" name="tipoAcceso" value="docente"> Docente</label></div><div id="studentLoginFields"><label for="loginGroup">Grupo</label> <select id="loginGroup"><option value="2J">2.º J</option><option value="2L">2.º L</option></select> <label for="loginNumber">Número de lista (01 a 55)</label> <input id="loginNumber" type="number" min="1" max="55" step="1" inputmode="numeric" placeholder="Ej. 05"></div><div id="teacherLoginFields" class="hide"><label for="loginEmail">Correo docente</label> <input id="loginEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></div><p><label for="loginPassword">Contraseña</label> <input id="loginPassword" type="password" autocomplete="current-password"></p><div class="row"><button id="loginButton" type="button">Entrar</button><button id="logoutButton" type="button" class="secondary hide">Cerrar sesión</button></div><p id="loginStatus" role="status"></p></section>
 <div id="sessionBar" class="hide" aria-label="Sesión activa"><strong>🦎 Papelería Digital ETI 96</strong><span id="sessionIdentity"></span><span id="logoutSlot"></span></div>
 <section class="card hide" id="teacherPanel"><h2>Panel docente · Historial</h2><p>Consulta las sesiones de estudiantes registrados. Solo disponible para cuentas con rol docente.</p><button id="refreshSessions" type="button">Actualizar historial</button><div id="sessionsList" aria-live="polite"></div></section>
 <div id="studentApp" class="hide">
