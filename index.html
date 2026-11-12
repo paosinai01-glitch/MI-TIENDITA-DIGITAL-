@@ -59,6 +59,37 @@ let user=null,profile=null,sessionRef=null,sessionRetos=[],sessionOpen=false;
 const status=message=>byId('loginStatus').textContent=message;
 const diagnostic=(message,visible=true)=>{byId('diagnosticText').textContent=message;byId('accessDiagnostics').classList.toggle('hide',!visible);};
 let profileCheckNumber=0;
+// Diagnóstico sin exponer contraseñas, tokens ni información privada de estudiantes.
+function uidCodes(s){return Array.from(s).map((c,i)=>`${i+1}:${c}(${c.codePointAt(0)})`).join(' ');}
+async function diagnoseMissingProfile(next){
+ const lines=[
+  'Proyecto: '+app.options.projectId,
+  'Base de datos: (default)',
+  'UID autenticado: '+next.uid,
+  'Longitud: '+next.uid.length,
+  'Caracteres exactos: '+uidCodes(next.uid),
+  'Ruta consultada: Usuarios/'+next.uid,
+  'SDK: la lectura del servidor devolvió exists() = false.'
+ ];
+ // Una consulta de lista independiente ayuda a separar ruta incorrecta y reglas.
+ // Si falla por permisos, NO se interpreta como prueba de que el documento no existe.
+ try{
+  const all=await getDocs(collection(db,'Usuarios'));
+  const ids=all.docs.map(d=>d.id);
+  const exact=ids.includes(next.uid);
+  lines.push('Consulta de colección: permitida; documentos visibles: '+ids.length);
+  lines.push('Coincidencia exacta de UID en la colección: '+(exact?'SÍ':'NO'));
+  if(!exact){
+   const candidates=ids.filter(id=>id.length===next.uid.length && id.toLowerCase()===next.uid.toLowerCase());
+   if(candidates.length) lines.push('Identificadores similares (difieren en mayúsculas/minúsculas): '+candidates.join(', '));
+  }
+  if(exact)lines.push('ALERTA: la consulta de colección sí encuentra el UID, pero la lectura individual no. Revisar caché, conexión y configuración del proyecto.');
+ }catch(e){
+  lines.push('Consulta de colección: '+(e.code||e.message));
+  lines.push('Esto NO confirma que el documento no exista: la consulta puede estar restringida por las reglas.');
+ }
+ return lines.join('\n');
+}
 async function checkProfile(next){
  const check=++profileCheckNumber;
  user=next;profile=null;
@@ -69,12 +100,13 @@ async function checkProfile(next){
  if(!next){status('Inicia sesión para continuar.');return;}
  status('Verificando el perfil de Firestore…');
  try{
-  // El UID procede exclusivamente de Firebase Authentication.
   const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
   if(check!==profileCheckNumber)return;
   if(!snap.exists()){
-   status('No se encontró el perfil de esta cuenta en Firestore.');
-   diagnostic('Proyecto: '+app.options.projectId+'\nDocumento buscado: Usuarios/'+next.uid+'\nEl documento no existe según la lectura del servidor. Revisa el ID exacto en Firestore.');
+   status('Firestore no devolvió el perfil de esta cuenta. Consulta el diagnóstico.');
+   const detail=await diagnoseMissingProfile(next);
+   if(check!==profileCheckNumber)return;
+   diagnostic(detail);
    return;
   }
   profile=snap.data();
@@ -90,7 +122,7 @@ async function checkProfile(next){
  }catch(e){
   if(check!==profileCheckNumber)return;
   status('No se pudo abrir el perfil: '+(e.code||e.message));
-  diagnostic('Proyecto: '+app.options.projectId+'\nDocumento: Usuarios/'+next.uid+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message+'\n\nSi el código es permission-denied, el problema está en la autorización de Firestore, no en la contraseña.');
+  diagnostic('Proyecto: '+app.options.projectId+'\nDocumento: Usuarios/'+next.uid+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message+'\n\nUn error permission-denied significa que Firestore rechazó esta consulta; no demuestra que el documento esté ausente.');
  }
 }
 byId('retryProfile').onclick=()=>checkProfile(auth.currentUser);
