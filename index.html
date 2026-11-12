@@ -51,7 +51,7 @@ $('route').addEventListener('change',()=>{renderCart()});$('start').onclick=star
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js';
-import {getFirestore,doc,getDocFromServer,getDocsFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
+import {getFirestore,doc,getDocFromServer,collection,addDoc,updateDoc,getDocs,serverTimestamp} from 'https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js';
 const firebaseConfig={apiKey:'AIzaSyA36PzVwed30aDC0KZQDefHJmT63GiOle4',authDomain:'mi-tiendita-digital-v4.firebaseapp.com',projectId:'mi-tiendita-digital-v4',storageBucket:'mi-tiendita-digital-v4.firebasestorage.app',messagingSenderId:'395051599416',appId:'1:395051599416:web:5a696e57464f4223e588cd'};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const byId=id=>document.getElementById(id);
@@ -59,19 +59,6 @@ let user=null,profile=null,sessionRef=null,sessionRetos=[],sessionOpen=false;
 const status=message=>byId('loginStatus').textContent=message;
 const diagnostic=(message,visible=true)=>{byId('diagnosticText').textContent=message;byId('accessDiagnostics').classList.toggle('hide',!visible);};
 let profileCheckNumber=0;
-// Segunda vía de lectura: API REST oficial de Firestore, con el token de la sesión.
-// El token se usa solo en la solicitud y nunca se imprime ni se guarda.
-async function readProfileRest(account){
- const token=await account.getIdToken(true);
- const url='https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(firebaseConfig.projectId)+'/databases/(default)/documents/Usuarios/'+encodeURIComponent(account.uid);
- const response=await fetch(url,{method:'GET',headers:{Authorization:'Bearer '+token},cache:'no-store'});
- const data=await response.json().catch(()=>({}));
- if(!response.ok)return {ok:false,http:response.status,code:data.error?.status||'SIN_CODIGO',message:data.error?.message||'Sin detalle'};
- const fields=data.fields||{};
- const value=k=>fields[k]?.stringValue??fields[k]?.booleanValue??fields[k]?.integerValue??null;
- return {ok:true,http:response.status,profile:{rol:value('rol'),activo:value('activo'),grupo:value('grupo'),numeroLista:value('numeroLista')}};
-}
-
 async function checkProfile(next){
  const check=++profileCheckNumber;
  user=next;profile=null;
@@ -81,40 +68,17 @@ async function checkProfile(next){
  diagnostic('',false);
  if(!next){status('Inicia sesión para continuar.');return;}
  status('Verificando el perfil de Firestore…');
- const path='Usuarios/'+next.uid;
- const identity='Correo autenticado: '+(next.email||'(sin correo)')+'\nUID real de la sesión: '+next.uid+'\nLongitud del UID: '+next.uid.length+'\nCaracteres del UID (Unicode): '+[...next.uid].map((c,i)=>`${i+1}:${c}(${c.codePointAt(0)})`).join(' ');
  try{
+  // El UID procede exclusivamente de Firebase Authentication.
   const snap=await getDocFromServer(doc(db,'Usuarios',next.uid));
   if(check!==profileCheckNumber)return;
   if(!snap.exists()){
-   status('La lectura SDK no encontró el perfil. Probando lectura REST oficial…');
-   let rest;
-   try{rest=await readProfileRest(next);}catch(e){rest={ok:false,http:'sin respuesta',code:e.name||'ERROR_RED',message:e.message};}
-   if(check!==profileCheckNumber)return;
-   diagnostic('DIAGNÓSTICO DE DOS VÍAS\n'+identity+'\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nRuta: '+path+'\nLectura SDK: exists() = false\nLectura REST: HTTP '+rest.http+(rest.ok?' — DOCUMENTO ENCONTRADO':' — '+rest.code+' — '+rest.message));
-   if(!rest.ok){
-    // Compara ambos documentos docentes que existen en la consola, sin modificar datos.
-    const candidates=['yhU8ZSQdGlPJweCv3ByoSnnfxL33','yhU8ZSQdGIPJweCv3ByoSnnfxL33'];
-    const checks=[];
-    for(const candidate of candidates){
-      try{
-        const token=await next.getIdToken();
-        const target='https://firestore.googleapis.com/v1/projects/'+firebaseConfig.projectId+'/databases/(default)/documents/Usuarios/'+encodeURIComponent(candidate);
-        const result=await fetch(target,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
-        checks.push(candidate+' → HTTP '+result.status);
-      }catch(error){checks.push(candidate+' → '+error.message);}
-    }
-    if(check!==profileCheckNumber)return;
-    const detail='\n\nCOMPROBACIÓN DE AMBOS DOCUMENTOS (sin cambiar Firebase):\n'+checks.join('\n')+'\n\nInterpretación: 200 = documento accesible; 403 = acceso denegado; 404 = no encontrado en la ruta consultada.';
-    byId('diagnosticText').textContent+=detail;
-    status('No se pudo abrir el perfil. Revisa la comprobación de ambos documentos.');
-    return;
-   }
-   profile=rest.profile;
-  }else{
-   profile=snap.data();
+   status('No se encontró el perfil de esta cuenta en Firestore.');
+   diagnostic('Proyecto: '+app.options.projectId+'\nDocumento buscado: Usuarios/'+next.uid+'\nEl documento no existe según la lectura del servidor. Revisa el ID exacto en Firestore.');
+   return;
   }
-  if(profile.activo!==true)throw Error('El perfil existe, pero el campo activo no es true.');
+  profile=snap.data();
+  if(profile.activo!==true)throw Error('El perfil está desactivado o falta activo: true.');
   if(profile.rol==='docente'){
    status('Acceso docente autorizado.');
    byId('teacherPanel').classList.remove('hide');
@@ -122,15 +86,15 @@ async function checkProfile(next){
   }else if(profile.rol==='alumno'){
    status('Acceso autorizado: grupo '+profile.grupo+', lista '+profile.numeroLista+'.');
    byId('studentApp').classList.remove('hide');
-  }else throw Error('El perfil existe, pero el rol no es docente ni alumno.');
+  }else throw Error('El perfil no tiene un rol válido.');
  }catch(e){
   if(check!==profileCheckNumber)return;
-  status('No se pudo cargar el perfil: '+e.message);
-  diagnostic('Prueba: lectura directa del SERVIDOR (sin caché)\n'+identity+'\nProyecto: '+app.options.projectId+'\nBase de datos: (default)\nUID: '+next.uid+'\nRuta: '+path+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message);
+  status('No se pudo abrir el perfil: '+(e.code||e.message));
+  diagnostic('Proyecto: '+app.options.projectId+'\nDocumento: Usuarios/'+next.uid+'\nCódigo: '+(e.code||'sin código')+'\nDetalle: '+e.message+'\n\nSi el código es permission-denied, el problema está en la autorización de Firestore, no en la contraseña.');
  }
 }
 byId('retryProfile').onclick=()=>checkProfile(auth.currentUser);
-byId('copySessionUid').onclick=async()=>{const uid=auth.currentUser?.uid;if(!uid){status('Inicia sesión antes de copiar el UID.');return;}try{await navigator.clipboard.writeText(uid);status('UID exacto copiado. Úsalo como ID del documento en Firestore.');}catch(e){window.prompt('Copia este UID exacto:',uid);}};
+byId('copySessionUid').onclick=async()=>{const uid=auth.currentUser?.uid;if(!uid){status('Inicia sesión antes de copiar el UID.');return;}try{await navigator.clipboard.writeText(uid);status('UID exacto copiado.');}catch(e){window.prompt('Copia este UID exacto:',uid);}};
 
 window.v4Ready=()=>!!(user && profile && profile.activo===true && profile.rol==='alumno' && !sessionOpen);
 window.v4HasOpenSession=()=>sessionOpen;
